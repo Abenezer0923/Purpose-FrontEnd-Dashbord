@@ -1,37 +1,41 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getUsername } from '../helper/helper'
 
-axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = "https://api.purposeblacketh.com";
 
+/** Custom hook */
+export default function useFetch(token) {
+  const [getData, setData] = useState({
+    isLoading: false,
+    apiData: undefined,
+    status: null,
+    serverError: null,
+  });
 
-/** custom hook */
-export default function useFetch(query){
-    const [getData, setData] = useState({ isLoading : false, apiData: undefined, status: null, serverError: null })
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setData((prev) => ({ ...prev, isLoading: true }));
 
-    useEffect(() => {
-
-        const fetchData = async () => {
-            try {
-                setData(prev => ({ ...prev, isLoading: true}));
-
-                const { username } = !query ? await getUsername() : '';
-                
-                const { data, status } = !query ? await axios.get(`http://localhost:8080/api/user/${username}`) : await axios.get(`http://localhost:8080/api/${query}`);
-
-                if(status === 201){
-                    setData(prev => ({ ...prev, isLoading: false}));
-                    setData(prev => ({ ...prev, apiData : data, status: status }));
-                }
-
-                setData(prev => ({ ...prev, isLoading: false}));
-            } catch (error) {
-                setData(prev => ({ ...prev, isLoading: false, serverError: error }))
-            }
+        // Assuming you have a valid token, include it in the headers
+        const headers = {
+          Authorization: `Bearer ${token}`,
         };
-        fetchData()
 
-    }, [query]);
+        const response = await axios.get("https://api.purposeblacketh.com/api/shareHolder/dashBoard/", { headers });
 
-    return [getData, setData];
+        if (response.status === 201) {
+          setData((prev) => ({ ...prev, apiData: response.data, status: response.status }));
+        }
+
+        setData((prev) => ({ ...prev, isLoading: false }));
+      } catch (error) {
+        setData((prev) => ({ ...prev, isLoading: false, serverError: error }));
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  return [getData, setData];
 }

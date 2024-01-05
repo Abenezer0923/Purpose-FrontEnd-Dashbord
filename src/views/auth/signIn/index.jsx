@@ -4,8 +4,9 @@
 import React from "react";
 import { Link, NavLink, useHistory } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { useFormik } from "formik";
 
+import { useFormik } from "formik";
+import imgs from "assets/img/Purpose-black.jpg"
 // Chakra imports
 import {
   Box,
@@ -101,7 +102,7 @@ function SignIIn() {
 
 
   return (
-    <DefaultAuth illustrationBackground={ll} image={ll}>
+    <DefaultAuth illustrationBackground={imgs} image={imgs}>
       {/* Add Toaster component */}
       <Toaster position="top-center" reverseOrder={false}></Toaster>
       <Flex

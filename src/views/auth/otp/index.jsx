@@ -39,7 +39,7 @@ import { useAuthStore } from "../../../store/store";
 
 function SignIIn() {
   const history = useHistory();
-  const { username } = useAuthStore((state) => state.auth);
+  const { username, token } = useAuthStore((state) => state.auth);
   const [show, setShow] = useState(false);
 
   // useEffect(() => {
@@ -59,18 +59,18 @@ function SignIIn() {
     validateOnChange: false,
     onSubmit: async (values) => {
       try {
-        const { otp } = values; // Assuming OTP is entered in the password field
-        console.log("Hi", otp);
-  
-        let { status, token } = await verifyOTP({ otp });
-  
-        if (status === 200 && token) {
-          // Assuming the token is present and truthy
+        const { otp } = values;
+
+        // Include the token in the headers
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+
+        // Make the API request
+        let { status } = await verifyOTP({ otp }, headers);
+
+        if (status === 200) {
           toast.success("Verification Successful!");
-          // Save the token to your preferred location, e.g., local storage
-          // localStorage.setItem('token', token);
-          
-          // Redirect to "/admin/default"
           history.push("/admin/default");
         } else {
           toast.error("Invalid token or verification failed!");

@@ -37,7 +37,7 @@ import Usa from "assets/img/dashboards/usa.png";
 import MiniCalendar from "components/calendar/MiniCalendar";
 import MiniStatistics from "components/card/MiniStatistics";
 import IconBox from "components/icons/IconBox";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   MdAddTask,
   MdAttachMoney,
@@ -67,6 +67,69 @@ export default function UserReports() {
   // Chakra Color Mode
   const brandColor = useColorModeValue("brand.500", "white");
   const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+
+  const [franchiseData, setFranchiseData] = useState({
+    name: "Franchise",
+    value: "Loading...",
+    growth: "buy",
+  });
+
+  const [ordinaryData, setOrdinaryData] = useState({
+    name: "Ordinary",
+    value: "Loading...",
+    growth: "buy",
+  });
+
+  const [tsmData, setTsmData] = useState({
+    name: "TSM",
+    value: "Loading...",
+    growth: "buy",
+  });
+
+  const [totalData, setTotalData] = useState({
+    name: "Total",
+    value: "Loading...",
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://api.purposeblacketh.com/api/shareHolder/dashBoard/");
+        const data = await response.json();
+        console.log("Abbbccc", data.completedShareInfo.numberOfShare)
+
+        // Update state with fetched data
+        setFranchiseData({
+          name: "Franchise",
+          value: data.completedShareInfo.numberOfShare,
+          growth: "buy",
+        });
+
+        setOrdinaryData({
+          name: "Ordinary",
+          value: data.ordinary.toString(),
+          growth: "buy",
+        });
+
+        setTsmData({
+          name: "TSM",
+          value: data.tsm.toString(),
+          growth: "buy",
+        });
+
+        setTotalData({
+          name: "Total",
+          value: data.total.toString(),
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle errors as needed
+      }
+    };
+
+    // Call fetchData when the component mounts
+    fetchData();
+  }, []); 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
@@ -74,7 +137,7 @@ export default function UserReports() {
         gap="25px"
         mb="20px"
       >
-        <MiniStatistics name="Franchise" value="100,000" growth="buy" />
+        <MiniStatistics {...franchiseData} />
         <MiniStatistics name="Ordinary" value="0" growth="buy" />
         <MiniStatistics name="TSM" value="2500" growth="buy" />
 
