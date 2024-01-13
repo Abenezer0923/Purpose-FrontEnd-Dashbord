@@ -44,8 +44,8 @@ function SignIIn() {
   const history = useHistory();
   const setUsername = useAuthStore((state) => state.setUsername);
   const { username } = useAuthStore((state) => state.auth);
-  const [fetchData] = useFetch(`/user/${username}`);
-  const { isLoading, apiData, serverError } = fetchData;
+  //const [fetchData] = useFetch(`/user/${username}`);
+  //const { isLoading, apiData, serverError } = fetchData;
 
 
 

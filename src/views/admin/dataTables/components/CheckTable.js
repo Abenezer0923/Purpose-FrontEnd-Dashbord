@@ -125,6 +125,19 @@ export default function CheckTable(props) {
                         {cell.value}
                       </Text>
                     );
+                  } else if (cell.column.Header === "PAYMENT_METHOD") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
+                    );
+                  }
+                  else if (cell.column.Header === "PAID_AMOUNT") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
+                    );
                   } else if (cell.column.Header === "DATE") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>

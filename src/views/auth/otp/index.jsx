@@ -54,24 +54,26 @@ function SignIIn() {
     initialValues: {
       otp: '',
     },
-    
     validateOnBlur: false,
     validateOnChange: false,
     onSubmit: async (values) => {
       try {
         const { otp } = values;
-
-        // Include the token in the headers
-        const headers = {
-          Authorization: `Bearer ${token}`,
-        };
-
-        // Make the API request
-        let { status } = await verifyOTP({ otp }, headers);
-
+  
+        // Make the OTP verification request
+        const { status, data } = await verifyOTP({ otp });
+  
         if (status === 200) {
-          toast.success("Verification Successful!");
+          // Assuming the token is present in the response data
+          const { token } = data;
+  
+          // Save the token to local storage
+          localStorage.setItem('token', token);
+  
+          // Redirect to the specified route using the token
           history.push("/admin/default");
+  
+          toast.success("Verification Successful!");
         } else {
           toast.error("Invalid token or verification failed!");
         }
@@ -81,6 +83,7 @@ function SignIIn() {
       }
     },
   });
+  
   
 
   const handleClick = () => setShow(!show);

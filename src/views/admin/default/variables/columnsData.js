@@ -1,15 +1,19 @@
 export const columnsDataCheck = [
   {
-    Header: "History",
-    accessor: "name",
+    Header: "PAYMENTMETHOD",
+    accessor: "paymentMethod",
   },
-  // {
-
+  {
+    Header: "PAIDAMOUNT",
+    accessor: "paidAmount",
+  }
+,  
   {
     Header: "DATE",
-    accessor: "date",
-  },
+    accessor: "updatedAt",
+  }
 ];
+
 export const columnsHistoryCheck = [
   {
     Header: "Latest Transactions",

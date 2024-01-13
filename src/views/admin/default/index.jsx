@@ -1,26 +1,3 @@
-/*!
-  _   _  ___  ____  ___ ________  _   _   _   _ ___   
- | | | |/ _ \|  _ \|_ _|__  / _ \| \ | | | | | |_ _| 
- | |_| | | | | |_) || |  / / | | |  \| | | | | || | 
- |  _  | |_| |  _ < | | / /| |_| | |\  | | |_| || |
- |_| |_|\___/|_| \_\___/____\___/|_| \_|  \___/|___|
-                                                                                                                                                                                                                                                                                                                                       
-=========================================================
-* Horizon UI - v1.1.0
-=========================================================
-
-* Product Page: https://www.horizon-ui.com/
-* Copyright 2023 Horizon UI (https://www.horizon-ui.com/)
-
-* Designed and Coded by Simmmple
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-// Chakra imports
 import {
   Avatar,
   Box,
@@ -62,74 +39,133 @@ import {
 import tableDataCheck from "views/admin/default/variables/tableDataCheck.json";
 import tableDataComplex from "views/admin/default/variables/tableDataComplex.json";
 import tableHistory from "views/admin/default/variables/tableHistory.json";
+import useFetch from "hooks/fetch.hook";
+import axios from "axios";
+import create from "zustand";
 
-export default function UserReports() {
+const UserReports = async () =>{
   // Chakra Color Mode
-  const brandColor = useColorModeValue("brand.500", "white");
-  const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  // const brandColor = useColorModeValue("brand.500", "white");
+  // const boxBg = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
 
-  const [franchiseData, setFranchiseData] = useState({
-    name: "Franchise",
-    value: "Loading...",
-    growth: "buy",
-  });
+  // const [{ isLoading, apiData, serverError }] = await useFetch();
+  
+  
+  const [getData, setData] = useState({ isLoading : false, apiData: ' ...', status: null, serverError: null })
+  // Inside your fetchData function in useFetch.js
+  let token = localStorage.getItem('token')
 
-  const [ordinaryData, setOrdinaryData] = useState({
-    name: "Ordinary",
-    value: "Loading...",
-    growth: "buy",
-  });
+  
+    
+      
+      const headers = {
+        Authorization: `${token}`,
+      };
+      
+     const data = await axios.get('https://api.purposeblacketh.com/api/shareHolder/dashBoard/', { headers })
+      // .then(resp => {
+      //   setData({
+      //     ...getData,
 
-  const [tsmData, setTsmData] = useState({
-    name: "TSM",
-    value: "Loading...",
-    growth: "buy",
-  });
+      //     isLoading: false,
+      //     apiData: resp.data,
+      //     status: resp.status, 
+      //   });
+      //   console.log("The Response: ", resp)
+      // })
+      // .catch(err => {
+      //   console.log("Error : ", err)
+      // });
+  
+      // if (status === 200) {
+   
+  
+      //   // Log the updated state after the setData callback
+      //   console.log("token Api", {
+      //     ...getData,
+      //     apiData: data,
+      //     status: status,
+      //   });
+      // }
+     
+  
+  console.log("apiData demo", data.data);
+  
 
-  const [totalData, setTotalData] = useState({
-    name: "Total",
-    value: "Loading...",
-  });
+  
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://api.purposeblacketh.com/api/shareHolder/dashBoard/");
-        const data = await response.json();
-        console.log("Abbbccc", data.completedShareInfo.numberOfShare)
 
-        // Update state with fetched data
-        setFranchiseData({
-          name: "Franchise",
-          value: data.completedShareInfo.numberOfShare,
-          growth: "buy",
-        });
 
-        setOrdinaryData({
-          name: "Ordinary",
-          value: data.ordinary.toString(),
-          growth: "buy",
-        });
+  // const [res, setRes] = useState({
+  //   obj: " ",
+  // });
 
-        setTsmData({
-          name: "TSM",
-          value: data.tsm.toString(),
-          growth: "buy",
-        });
+  // const [franchiseData, setFranchiseData] = useState({
+  //   name: "Franchise",
+  //   value: "Loading...",
+  //   growth: "buy",
+  // });
 
-        setTotalData({
-          name: "Total",
-          value: data.total.toString(),
-        });
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Handle errors as needed
-      }
-    };
+  // const [ordinaryData, setOrdinaryData] = useState({
+  //   name: "Ordinary",
+  //   value: "Loading...",
+  //   growth: "buy",
+  // });
 
-    // Call fetchData when the component mounts
-    fetchData();
-  }, []); 
+  // const [tsmData, setTsmData] = useState({
+  //   name: "TSM",
+  //   value: "Loading...",
+  //   growth: "buy",
+  // });
+
+  // const [totalData, setTotalData] = useState({
+  //   name: "Total",
+  //   value: "Loading...",
+  // });
+
+  
+    // Handle loading, errors, or use apiData as needed
+    if (getData.isLoading) {
+      console.log("Loading data...");
+    } else if (getData.apiData) {
+      // Update state with fetched data
+
+      setFranchiseData((prevData) => ({
+        ...prevData,
+        value: getData.apiData.completedShareInfo[1]?.numberOfShare || "0",
+      }));
+      console.log("Aman ", getData.apiData.payment_history.slice(0, 3));
+      // setRes((pr) => ({
+      //   ...pr,
+      //   obj: getData.apiData.payment_history.slice(0, 3),
+      // }));
+
+      setOrdinaryData((prevData) => ({
+        ...prevData,
+        value: getData.apiData.completedShareInfo[0]?.numberOfShare || "0",
+      }));
+
+      setTsmData((prevData) => ({
+        ...prevData,
+        value: getData.apiData.completedShareInfo[2]?.numberOfShare || "0",
+      }));
+
+      setTotalData((prevData) => ({
+        ...prevData,
+        value:
+          parseInt(franchiseData.value) +
+          parseInt(ordinaryData.value) +
+          parseInt(tsmData.value),
+      }));
+    }  if (getData.serverError) {
+      console.error("Error fetching data:", getData.serverError);
+    }
+  
+  
+
+    if(getData.isLoading) return <h1>isLoading</h1>;
+  if(getData.serverError) return <h1>{getData.serverError.message}</h1>
+
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <SimpleGrid
@@ -138,10 +174,10 @@ export default function UserReports() {
         mb="20px"
       >
         <MiniStatistics {...franchiseData} />
-        <MiniStatistics name="Ordinary" value="0" growth="buy" />
-        <MiniStatistics name="TSM" value="2500" growth="buy" />
+        <MiniStatistics {...ordinaryData} />
+        <MiniStatistics {...tsmData} />
 
-        <MiniStatistics name="Total" value="2935" />
+        <MiniStatistics {...totalData} />
       </SimpleGrid>
 
       <SimpleGrid columns={{ base: 1, md: 2, xl: 2 }} gap="20px" mb="20px">
@@ -149,7 +185,7 @@ export default function UserReports() {
         <WeeklyRevenue />
       </SimpleGrid>
       <SimpleGrid columns={{ base: 1, md: 1, xl: 2 }} gap="20px" mb="20px">
-        <CheckTable columnsData={columnsDataCheck} tableData={tableDataCheck} />
+        {/* <CheckTable columnsData={columnsDataCheck} tableData={res.obj} /> */}
         <ComplexTable
           columnsData={columnsDataComplex}
           tableData={tableDataComplex}
@@ -167,4 +203,6 @@ export default function UserReports() {
       </SimpleGrid>
     </Box>
   );
-}
+};
+
+export default UserReports;

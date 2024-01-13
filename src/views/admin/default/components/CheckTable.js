@@ -9,9 +9,17 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  Button
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  Popover,
+  useDisclosure,
+  PopoverTrigger,
+  Button,
+  ModalCloseButton
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -26,6 +34,9 @@ import Menu from "components/menu/MainMenu";
 const bgButton = "d7a022";
 export default function CheckTable(props) {
   const { columnsData, tableData } = props;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedOption, setSelectedOption] = useState(null);
+
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -79,7 +90,12 @@ export default function CheckTable(props) {
             Show All
           </Button>
       </Flex>
-      <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
+      <Table {...getTableProps()} variant='simple'     css={`
+          tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+          }
+        `} color='gray.500' mb='24px' >
         <Thead>
           {headerGroups.map((headerGroup, index) => (
             <Tr {...headerGroup.getHeaderGroupProps()} key={index}>
@@ -111,23 +127,37 @@ export default function CheckTable(props) {
                   if (cell.column.Header === "History") {
                     data = (
                       <Flex align='center'>
-                        {/* <Checkbox
+                        <Checkbox
                           defaultChecked={cell.value[1]}
                           colorScheme='brandScheme'
                           me='10px'
-                        /> */}
+                        />
                         <Text color={textColor} fontSize='sm' fontWeight='700'>
                           {cell.value[0]}
                         </Text>
                       </Flex>
                     );
-                  } else if (cell.column.Header === "QUANTITY") {
+                  } else if (cell.column.Header === "PAYMENTMETHOD") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
                       </Text>
                     );
-                  } else if (cell.column.Header === "DATE") {
+                  }
+                  else if (cell.column.Header === "PAIDAMOUNT") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
+                    );
+                  }
+                  else if (cell.column.Header === "QUANTITY") {
+                    data = (
+                      <Text color={textColor} fontSize='sm' fontWeight='700'>
+                        {cell.value}
+                      </Text>
+                    );
+                  }  else if (cell.column.Header === "DATE") {
                     data = (
                       <Text color={textColor} fontSize='sm' fontWeight='700'>
                         {cell.value}
@@ -135,14 +165,58 @@ export default function CheckTable(props) {
                     );
                   }
                   return (
-                    <Td
+                    <><Td
                       {...cell.getCellProps()}
                       key={index}
                       fontSize={{ sm: "14px" }}
                       minW={{ sm: "150px", md: "200px", lg: "auto" }}
                       borderColor='transparent'>
                       {data}
-                    </Td>
+                    </Td><Modal
+                      isOpen={isOpen}
+                      onClose={() => {
+                        onClose();
+                        setSelectedOption(null);
+                      } }
+                      isCentered
+                      size="xl"
+                      maxH="650px"
+                    >
+                        <ModalOverlay />
+                        <ModalContent>
+                          <ModalCloseButton />
+                          <Flex
+                            justify="space-between"
+                            ps="0px"
+                            pe="20px"
+                            pt="5px"
+                            flexDirection={{ base: "column", lg: "row" }}
+                            alignItems={{ base: "center", lg: "flex-start" }}
+                          >
+                            <ModalBody>
+                              <Popover>
+                                <PopoverTrigger>
+                                  <Text
+                                    color={textColor}
+                                    fontWeight="bold"
+                                    fontSize={{ base: "3xl", lg: "4xl" }}
+                                    lineHeight="150%"
+                                    mt={{ base: 0, lg: "3rem" }}
+                                    ml={{ base: 0, lg: "3rem" }}
+                                    mb="2rem"
+                                    textAlign={{ base: "center", lg: "3rem" }}
+                                  >
+                                    Please Complete
+                                    <br />
+                                    Remaining Payment!
+                                    <br />
+                                  </Text>
+                                </PopoverTrigger>
+                              </Popover>
+                            </ModalBody>
+                          </Flex>
+                        </ModalContent>
+                      </Modal></>
                   );
                 })}
               </Tr>
